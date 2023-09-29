@@ -52,7 +52,7 @@ eval_steps: 20
 eval_table_size:
 save_steps:
 debug:
-deepspeed: deepspeed/zero1.json
+deepspeed: deep_config.json
 weight_decay: 0.0
 fsdp:
 fsdp_config:
