@@ -1,5 +1,5 @@
-base_model: NousResearch/Llama-2-7b-hf
-base_model_config: NousResearch/Llama-2-7b-hf
+base_model: NousResearch/Nous-Hermes-Llama2-13b
+base_model_config: NousResearch/Nous-Hermes-Llama2-13b
 model_type: LlamaForCausalLM
 tokenizer_type: LlamaTokenizer
 is_llama_derived_model: true
@@ -7,34 +7,35 @@ load_in_8bit: false
 load_in_4bit: true
 strict: false
 datasets:
-  - path: chats-bug/input_tools_plans
+  - path: chats-bug/multiple-subject-gen
     type: completion
-    field: prompt
+    field: text
 dataset_prepared_path: last_run_prepared
+hub_model_id: chats-bug/multiple-subject-gen-finetuned
 val_set_size: 0.01
 output_dir: ./qlora-out
 adapter: qlora
 lora_model_dir:
-sequence_len: 4096
+sequence_len: 650
 sample_packing: true
 pad_to_sequence_len: true
-lora_r: 32
-lora_alpha: 16
+lora_r: 128
+lora_alpha: 64
 lora_dropout: 0.05
 lora_target_modules:
 lora_target_linear: true
 lora_fan_in_fan_out:
-wandb_project: axolotl-testing
+wandb_project: 
 wandb_entity:
 wandb_watch:
 wandb_run_id:
 wandb_log_model:
-gradient_accumulation_steps: 4
-micro_batch_size: 8
-num_epochs: 3
+micro_batch_size: 32
+gradient_accumulation_steps: 8
+num_epochs: 5
 optimizer: paged_adamw_32bit
-lr_scheduler: cosine
-learning_rate: 0.0002
+lr_scheduler: constant
+learning_rate: 0.00015
 train_on_inputs: false
 group_by_length: false
 bf16: true
@@ -48,11 +49,18 @@ logging_steps: 1
 xformers_attention:
 flash_attention: true
 warmup_steps: 10
-eval_steps: 20
+eval_steps: 1
 eval_table_size:
-save_steps:
+save_steps: 2
 debug:
-deepspeed: deep_config.json
+deepspeed:
+deepspeed_config:
+  gradient_accumulation_steps: 8
+  gradient_clipping: 1.0
+  offload_optimizer_device: none
+  offload_param_device: none
+  zero3_init_flag: false
+  zero_stage: 2
 weight_decay: 0.1
 fsdp:
 fsdp_config:
